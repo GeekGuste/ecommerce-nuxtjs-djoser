@@ -15,11 +15,26 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path, re_path
+from sales.api.ProductViewset import ProductViewset, VariantTypeViewset, ImageViewset
+from sales.api.CategoryViewset import CategoryViewset
+from rest_framework import routers
+from django.conf import settings
+from django.conf.urls.static import static
 
+router = routers.SimpleRouter()
+router.register('category', CategoryViewset, basename='category')
+router.register('product', ProductViewset, basename='product')
+router.register('varianttype', VariantTypeViewset, basename='varianttype')
+router.register('image', ImageViewset, basename='varianttype')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
     re_path(r'^auth/', include('djoser.urls')),
     re_path(r'^auth/', include('djoser.urls.jwt')),
+    path('api/', include(router.urls))
 ]
+
+if settings.DEBUG:
+        urlpatterns += static(settings.MEDIA_URL,
+                              document_root=settings.MEDIA_ROOT)
