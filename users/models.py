@@ -11,4 +11,4 @@ class User(AbstractUser):
     email = models.EmailField('email address', unique=True)
     phone_number = models.CharField(max_length=20, blank=True)
     role = models.CharField(max_length=15,choices=ROLES, null=True)
-    REQUIRED_FIELDS = ['username', 'first_name', 'last_name', 'phone_number']
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name', 'phone_number', 'role']
