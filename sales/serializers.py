@@ -4,11 +4,20 @@ import this
 from unicodedata import category
 from matplotlib.pyplot import cla
 from rest_framework import serializers
+from sales.models import DeliveryZoneInfo
 from sales.models import Image
 from sales.models import VariantType
 from sales.models import Product 
 from sales.models import Category
  
+ 
+class DeliveryZoneInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DeliveryZoneInfo
+        #fields = '__all__'
+        fields = ('id',
+                  'zone',
+                  'delivery_charges')
  
 class CategorySerializer(serializers.ModelSerializer):
     parent = serializers.SerializerMethodField()

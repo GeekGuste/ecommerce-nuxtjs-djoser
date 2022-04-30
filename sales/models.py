@@ -39,6 +39,9 @@ class Video(models.Model):
 class Tags(models.Model):
     label = models.CharField(max_length=100)
 
+class DeliveryZoneInfo(models.Model):
+    zone = models.CharField(max_length=100)
+    delivery_charges = models.DecimalField(max_digits=15, decimal_places=2)
 
 class DeliveryAddress(models.Model):
     country = models.CharField(max_length=100)
