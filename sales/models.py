@@ -55,5 +55,12 @@ class DeliveryAddress(models.Model):
 class Order(models.Model):
     order_date = models.DateTimeField(auto_now=True)
     total = models.DecimalField(max_digits=15, decimal_places=2)
-    delivery_address = models.ForeignKey(DeliveryAddress, on_delete=models.CASCADE)
+    country = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    first_name = models.CharField(max_length=100)
+    address = models.CharField(max_length=255)
+    phone_number = models.CharField(max_length=100)
+    town = models.CharField(max_length=100)
+    postal_code = models.CharField(max_length=20)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     is_paid = models.BooleanField(default=False)
