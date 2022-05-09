@@ -61,6 +61,16 @@ class Order(models.Model):
     address = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=100)
     town = models.CharField(max_length=100)
-    postal_code = models.CharField(max_length=20)
+    delivery_charges = models.DecimalField(max_digits=15, decimal_places=2)
+    postal_code = models.CharField(max_length=20, null=True)
+    creation_date = models.DateTimeField(auto_now_add=True)
+    payment_date = models.DateTimeField(null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     is_paid = models.BooleanField(default=False)
+
+class OrderProduct:
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    label = models.CharField(max_length=200)
+    price = models.FloatField()
+    quantity = models.IntegerField(default=1)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
