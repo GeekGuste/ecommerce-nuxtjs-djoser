@@ -42,7 +42,8 @@ def create_payment(request):
             label=item['label'], 
             price = float(item['price']), 
             quantity=float(item['quantity']), 
-            order = order
+            order = order,
+            image_url = item['']
         )
         orderProduct.save()
         #reduce quantity
