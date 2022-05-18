@@ -36,7 +36,8 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     re_path(r'^auth/', include('djoser.urls')),
     re_path(r'^auth/', include('djoser.urls.jwt')),
-    path('api/', include(router.urls))
+    path('api/', include(router.urls)),
+    path('sales/', include('sales.urls'))
 ]
 
 if settings.DEBUG:
