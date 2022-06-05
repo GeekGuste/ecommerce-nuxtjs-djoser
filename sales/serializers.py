@@ -26,6 +26,7 @@ class CategorySerializer(serializers.ModelSerializer):
         #fields = '__all__'
         fields = ('id',
                   'label',
+                  'image',
                   'is_active',
                   'parent')
     def get_parent(self, instance):
@@ -40,6 +41,7 @@ class CategoryCreateSerializer(serializers.ModelSerializer):
         model = Category
         fields = ('id',
                   'label',
+                  'image',
                   'is_active',
                   'parent')
 
@@ -64,10 +66,11 @@ class VariantTypeSerializer(serializers.ModelSerializer):
                  'label')
 
 class CreateProductSerializer(serializers.ModelSerializer):
+    categories = CategoryCreateSerializer(required=False, many=True)
     class Meta:
         model = Product
         fields = ('id',
-                  'category',
+                  'categories',
                   'label',
                   'parent',
                   'description',
@@ -92,7 +95,7 @@ class ProductVariantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ('id',
-                  'category',
+                  'categories',
                   'variant_type',
                   'variant_value',
                   'label',
@@ -109,7 +112,7 @@ class ProductVariantSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    category = CategorySerializer(many=False)
+    categories = serializers.SerializerMethodField()
     variant_type = VariantTypeSerializer(many=False)
     parent = serializers.SerializerMethodField()
     variants = ProductVariantSerializer(many=True)
@@ -117,7 +120,8 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ('id',
-                  'category',
+                  'categories',
+                  'category_string',
                   'variant_type',
                   'variant_value',
                   'parent',
@@ -141,3 +145,7 @@ class ProductSerializer(serializers.ModelSerializer):
     def get_variants(self, instance):
         queryset = instance.variants.all()
         return ProductVariantSerializer(queryset, many=True).data
+    def get_categories(self, instance):
+        queryset = instance.categories.all()
+        return CategoryCreateSerializer(queryset, many=True).data
+    

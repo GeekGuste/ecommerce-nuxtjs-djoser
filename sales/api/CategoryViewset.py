@@ -4,8 +4,17 @@ from rest_framework.response import Response
 from sales.models import Category
 from sales.serializers import CategorySerializer, CategoryCreateSerializer, CategoryTreeSerializer
 from rest_framework.decorators import action
+from rest_framework.pagination import PageNumberPagination
+
+
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 100
+    page_size_query_param = 'page_size'
+    max_page_size = 1000
 
 class CategoryViewset(ModelViewSet):
+    #To return all objects
+    pagination_class = StandardResultsSetPagination
     serializer_class = CategorySerializer
     create_serializer_class = CategoryCreateSerializer
     tree_serializer_class = CategoryTreeSerializer

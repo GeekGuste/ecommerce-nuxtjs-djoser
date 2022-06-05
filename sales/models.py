@@ -1,4 +1,5 @@
 import datetime
+from unicodedata import category
 from django.db import models
 from numpy import product
 from users.models import User
@@ -7,18 +8,27 @@ from users.models import User
 class Category(models.Model):
     label = models.CharField(max_length=200)
     is_active = models.BooleanField()
+    image = models.ImageField(upload_to='categories', null=True)
     #on met category entre côtes et ça référence toujours la catégorie
     parent = models.ForeignKey("Category", on_delete=models.CASCADE, null=True, related_name="enfants")
+    def getTreeNames(self):
+        if self.parent is None:
+            return self.label
+        parent = Category.objects.get(pk=self.parent.id)
+        return parent.getTreeNames() + " " + self.label
+            
+        
 
 class VariantType(models.Model):
     label = models.CharField(max_length=100)
 
 class Product(models.Model):
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    categories = models.ManyToManyField(Category)
     parent = models.ForeignKey("Product", on_delete=models.CASCADE, null=True, related_name="variants")
     variant_type = models.ForeignKey(VariantType, on_delete=models.CASCADE, null=True)
     label = models.CharField(max_length=200)
     description = models.TextField()
+    category_string = models.TextField()
     qte_stock = models.IntegerField(default=100)
     principal_image = models.ImageField(upload_to='products', null=True)
     is_variant = models.BooleanField(default=False)
@@ -27,6 +37,12 @@ class Product(models.Model):
     promo_price = models.CharField(max_length=50, blank=True)
     is_active = models.BooleanField(default=True)
     pub_date = models.DateTimeField(auto_now=True)
+    def save(self, *args, **kwargs):
+        self.category_string = ""
+        if self.id:
+            for category in self.categories.all():
+                self.category_string += (category.getTreeNames() + " ")
+        super(Product, self).save(*args, **kwargs)
 
 class Image(models.Model):
     photo = models.ImageField(upload_to = 'products')
