@@ -3,6 +3,7 @@ from pyexpat import model
 import this
 from unicodedata import category
 from matplotlib.pyplot import cla
+from numpy import require
 from rest_framework import serializers
 from sales.models import DeliveryZoneInfo
 from sales.models import Image
@@ -37,13 +38,14 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class CategoryCreateSerializer(serializers.ModelSerializer):
+    parent_id = serializers.IntegerField(required=False)
     class Meta:
         model = Category
         fields = ('id',
                   'label',
                   'image',
                   'is_active',
-                  'parent')
+                  'parent_id')
 
 class CategoryTreeSerializer(serializers.ModelSerializer):
     enfants = serializers.SerializerMethodField()
