@@ -19,22 +19,6 @@ class DeliveryZoneInfoSerializer(serializers.ModelSerializer):
         fields = ('id',
                   'zone',
                   'delivery_charges')
- 
-class CategorySerializer(serializers.ModelSerializer):
-    parent = serializers.SerializerMethodField()
-    class Meta:
-        model = Category
-        #fields = '__all__'
-        fields = ('id',
-                  'label',
-                  'image',
-                  'is_active',
-                  'parent')
-    def get_parent(self, instance):
-        if instance.parent is not None:
-            return CategorySerializer(instance.parent).data
-        else:
-            return None
 
 
 class CategoryCreateSerializer(serializers.ModelSerializer):
@@ -46,6 +30,26 @@ class CategoryCreateSerializer(serializers.ModelSerializer):
                   'image',
                   'is_active',
                   'parent_id')
+
+ 
+class CategorySerializer(serializers.ModelSerializer):
+    parent = serializers.SerializerMethodField()
+    enfants = CategoryCreateSerializer(many=True)
+    class Meta:
+        model = Category
+        #fields = '__all__'
+        fields = ('id',
+                  'label',
+                  'image',
+                  'enfants',
+                  'is_active',
+                  'parent')
+    def get_parent(self, instance):
+        if instance.parent is not None:
+            return CategorySerializer(instance.parent).data
+        else:
+            return None
+
 
 class CategoryTreeSerializer(serializers.ModelSerializer):
     enfants = serializers.SerializerMethodField()

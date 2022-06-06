@@ -21,6 +21,26 @@ def create_payment(request):
     email = data['email']
     items = data['items']
     total = float(data['delivery_charges'])
+    
+    for item in items:
+        total += float(item['quantity']) * float(item['price'])
+    #create order
+    payment_intent = stripe.PaymentIntent.create(
+        amount=int(total * 100), 
+        currency='eur', 
+        payment_method_types=['card'],
+        receipt_email=email,
+        payment_method='pm_card_visa',
+    )
+    return Response(status=status.HTTP_200_OK, data={'payment_intent': payment_intent})
+
+@csrf_exempt
+@api_view(['POST'])
+def save_order(request):
+    data = request.data
+    email = data['email']
+    items = data['items']
+    total = float(data['delivery_charges'])
     order = Order(
         email = email,
         last_name = data['last_name'],
@@ -52,11 +72,5 @@ def create_payment(request):
         total += float(item['quantity']) * float(item['price'])
     order.total = total
     order.save()
-    #create order
-    payment_intent = stripe.PaymentIntent.create(
-        amount=int(total * 100), 
-        currency='eur', 
-        payment_method_types=['card'],
-        receipt_email=email,
-    )
-    return Response(status=status.HTTP_200_OK, data={'payment_intent': payment_intent})
+    
+    return Response(status=status.HTTP_200_OK, data={'order': order})
