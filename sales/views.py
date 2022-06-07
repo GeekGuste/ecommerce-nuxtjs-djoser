@@ -12,8 +12,9 @@ from rest_framework.decorators import api_view
 
 from django.views.decorators.csrf import csrf_exempt
 import stripe
+from django.conf import settings
 
-stripe.api_key = 'sk_test_51Kpr85DP9ndu4EFOTqCLn00O0N9U5V5FLyval6cPXhilZxUWnop4ujWv7JmNsxqcFEGwrScGPxuJCDhuk6LIp0QJ00e8oSFWOl'
+stripe.api_key = settings.STRIPE_API_KEY
 
 @csrf_exempt
 @api_view(['POST'])
@@ -122,5 +123,6 @@ def save_order(request):
         total += float(item['quantity']) * float(item['price'])
     order.total = total
     order.save()
+    #Send email to hochea and client
 
     return Response(status=status.HTTP_200_OK, data={'order': order.toJSON()})
