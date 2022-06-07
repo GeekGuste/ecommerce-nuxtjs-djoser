@@ -5,6 +5,8 @@ from unicodedata import category
 from numpy import product
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
+from sales.models import Order
+from sales.serializers import OrderSerializer
 from sales.models import Category
 from sales.models import Image
 from sales.models import Product, VariantType
@@ -106,9 +108,22 @@ class ImageViewset(ModelViewSet):
         image.delete()
         return Response(image)
         
-
-
 class VariantTypeViewset(ModelViewSet):
     serializer_class = VariantTypeSerializer
     def get_queryset(self):
         return VariantType.objects.all()
+
+class OrderViewset(ModelViewSet):
+    serializer_class = OrderSerializer
+    def get_queryset(self):
+        queryset = Order.objects.filter(user=self.request.user).order_by("-order_date")
+        return queryset
+    @action(detail=False, methods=['get'], url_path="all")
+    def all(self, request):
+        queryset = Order.objects.order_by("-order_date")
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)

@@ -1,4 +1,5 @@
 import datetime
+import json
 from unicodedata import category
 from django.db import models
 from numpy import product
@@ -85,6 +86,10 @@ class Order(models.Model):
     delivery_charges = models.DecimalField(max_digits=15, decimal_places=2)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     is_paid = models.BooleanField(default=False)
+    is_delivered = models.BooleanField(default=False)
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__, 
+            sort_keys=True, indent=4)
 
 class OrderProduct(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)

@@ -5,6 +5,8 @@ from unicodedata import category
 from matplotlib.pyplot import cla
 from numpy import require
 from rest_framework import serializers
+from sales.models import OrderProduct
+from sales.models import Order
 from sales.models import DeliveryZoneInfo
 from sales.models import Image
 from sales.models import VariantType
@@ -154,4 +156,45 @@ class ProductSerializer(serializers.ModelSerializer):
     def get_categories(self, instance):
         queryset = instance.categories.all()
         return CategoryCreateSerializer(queryset, many=True).data
-    
+
+class OrderProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderProduct
+        fields = ('id',
+                  'product',
+                  'label',
+                  'price',
+                  'quantity',
+                  'image_url'
+                )
+    def get_orderProducts(self, instance):
+        queryset = instance.orderProducts.all()
+        return OrderProductSerializer(queryset, many=True).data
+
+class OrderSerializer(serializers.ModelSerializer):
+    orderProducts = serializers.SerializerMethodField()
+    class Meta:
+        model = Order
+        fields = ('id',
+                  'order_date',
+                  'total',
+                  'country',
+                  'zone',
+                  'last_name',
+                  'first_name',
+                  'email',
+                  'address',
+                  'phone_number',
+                  'town',
+                  'postal_code',
+                  'creation_date',
+                  'payment_date',
+                  'delivery_charges',
+                  'is_delivered',
+                  'user',
+                  'is_paid',
+                  'orderProducts'
+                )
+    def get_orderProducts(self, instance):
+        queryset = instance.orderProducts.all()
+        return OrderProductSerializer(queryset, many=True).data
